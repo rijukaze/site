@@ -529,7 +529,7 @@ juara: Buat objek dengan index string ("0", "1", "2", dst). Setiap index berisi 
                     }
                 }
                 pengalamanHtml += ''
-                    + '  </ul></div><div class="mb-2"><b>Tools:</b> <input type="text" class="no-border auto-width" value="' + pengalaman[i].tools + '"></div>';
+                    + '  </ul></div><div class="mb-2"><b>Tools:</b> <textarea rows="1" class="border-0 w-full overflow-hidden resize-none auto-height" style="line-height: 1.2;" oninput="this.style.height=`auto`; this.style.height=this.scrollHeight+`px`;">' + pengalaman[i].tools + '</textarea></div>';
             }
         }
         $("#pengalaman").html(pengalamanHtml);
@@ -594,10 +594,10 @@ juara: Buat objek dengan index string ("0", "1", "2", dst). Setiap index berisi 
         }
         $("#juara").html(juaraHtml);
 
-        $("#soft").html('Soft Skill: <input type="text" class="no-border auto-width" value="' + skill.soft + '">');
-        $("#hard").html('Hard Skill: <input type="text" class="no-border auto-width" value="' + skill.hard + '">');
+        $("#soft").html('<b>Soft Skill:</b> <textarea rows="1" class="border-0 w-full overflow-hidden resize-none auto-height" style="line-height: 1.2;" oninput="this.style.height=`auto`; this.style.height=this.scrollHeight+`px`;">' + skill.soft + '</textarea>');
+        $("#hard").html('<b>Hard Skill:</b> <textarea rows="1" class="border-0 w-full overflow-hidden resize-none auto-height" style="line-height: 1.2;" oninput="this.style.height=`auto`; this.style.height=this.scrollHeight+`px`;">' + skill.hard + '</textarea>');
         if (skill.bahasa) {
-            $("#bahasa").html('Language: <input type="text" class="no-border auto-width" value="' + skill.bahasa + '">');
+            $("#bahasa").html('<b>Language:</b> <textarea rows="1" class="border-0 w-full overflow-hidden resize-none auto-height" style="line-height: 1.2;" oninput="this.style.height=`auto`; this.style.height=this.scrollHeight+`px`;">' + skill.bahasa + '</textarea>');
         }
 
         $("#printArea").removeClass("hidden");
