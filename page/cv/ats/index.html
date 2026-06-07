@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://rijukaze.github.io/site/images/icon.png" type="image/x-icon">
+
+    <title>RIJU 風</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jacques+Francois&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Antique&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+
+    <link rel="stylesheet" href="https://rijukaze.github.io/site/css/style.css">
+    <style>
+        .a4 {
+            font-family: 'Times New Roman', Times, serif;
+            padding: 50px 30px 50px 30px;
+            width: 210mm;
+        }
+
+        @media print {
+            body {
+                background-color: #FFFFFF !important;
+                visibility: hidden;
+            }
+
+            .a4 {
+                border: none;
+                visibility: visible;
+                position: absolute;
+                padding-top: 0px;
+                padding-bottom: 0px;
+                left: 0;
+                top: 0;
+            }
+
+            @page {
+                margin-top: 1.5cm;
+                margin-bottom: 1.5cm;
+            }
+        }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/printThis/1.15.0/printThis.min.js"></script>
+
+</head>
+
+<body class="bg-orange-50 min-h-screen pt-9 w-fit lg:w-full" style="min-width: 210mm;">
+    <header class="bg-white py-3 shadow-md fixed top-0 w-full">
+        <div class="container mx-auto px-2 flex text-center">
+            <a href="https://rijukaze.github.io/site/" class="flex">
+                <image src="https://rijukaze.github.io/site/images/icon.png" class="h-9" />
+                <span class="text-3xl mb-0 txt-JF">Riju<span class="txt-ZA">風</span></span>
+            </a>
+            <a href="https://rijukaze.github.io/site/cv/" class="ms-auto text-3xl">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+        </div>
+    </header>
+    <section class="py-8 flex-grow">
+        <div class="container mx-auto px-4 text-center mt-4 lg:mt-8">
+            <div class="mx-auto w-full sm:w-full md:w-1/2 lg:flex lg:w-full">
+                <span class="lg:ms-auto lg:w-1/4">
+                    <label
+                        class="flex flex-col items-center px-4 py-6 bg-white rounded-lg shadow tracking-wide uppercase border border-lime-300 cursor-pointer hover:bg-lime-100 text-green-600 transition">
+                        <i class="fa-solid fa-file-arrow-up fa-10x mb-4"></i>
+                        <h2 class="mt-2 text-black leading-normal font-bold">Upload File Excel (.xls / .xlsx)</h2>
+                        <input type="file" class="hidden" id="fileExcel" accept=".xlsx, .xls" />
+                    </label>
+                    <a href="../cv-fortmat.xlsx"
+                        class="w-full mt-3 flex flex-col items-center px-6 py-2 bg-lime-100 rounded-lg shadow tracking-wide uppercase border border-lime-300 cursor-pointer hover:bg-white transition font-bold">
+                        DOWNLOAD EXCEL FORMAT</a>
+                </span>
+
+                <div class="flex items-center justify-center">
+                    <h3 class="my-3 px-10">OR</h3>
+                </div>
+
+                <div
+                    class="lg:me-auto lg:w-1/4 flex flex-col items-center px-4 py-6 bg-white rounded-lg shadow tracking-wide uppercase border border-lime-300">
+                    <h2 class="mt-2 text-base leading-normal mb-3">Upload Data by JSON Format</h2>
+                    <button onclick="return copyAiPrompt()"
+                        class="w-full mb-6 flex flex-col items-center px-6 py-2 bg-lime-100 rounded-lg shadow tracking-wide uppercase border border-lime-300 cursor-pointer hover:bg-white transition font-bold">COPY
+                        AI PROMPT</button>
+                    <textarea id="json"
+                        class="block min-w-0 grow text-base p-2 focus:outline-none sm:text-sm/6 border border-lime-300 rounded-lg w-full"></textarea>
+                    <button onclick="return submitPrompt()"
+                        class="w-full mt-4 flex flex-col items-center px-6 py-2 bg-lime-100 rounded-lg shadow tracking-wide uppercase border border-lime-300 cursor-pointer hover:bg-white transition font-bold">SUBMIT</button>
+                </div>
+            </div>
+            <button id="btn-print" onclick="printArea()"
+                class="hidden w-full sm:w-full md:w-1/2 lg:w-1/3 mx-auto mt-12 flex flex-col items-center px-6 py-2 bg-lime-100 hover:bg-white rounded-lg shadow tracking-wide uppercase border border-lime-300 cursor-pointer hover:bg-lime-100-white transition font-bold">Print</button>
+            <div class="w-full flex mb-10">
+                <input type="color" id="title" onchange="titleColor()"
+                    class="hidden mt-4 ms-auto me-2 p-1 h-10 w-10 bg-white border border-gray-300 cursor-pointer rounded-lg " />
+                <input type="color" id="line" onchange="lineColor()"
+                    class="hidden mt-4 me-auto ms-2 p-1 h-10 w-10 bg-white border border-gray-300 cursor-pointer rounded-lg " />
+            </div>
+
+            <div id="printArea" class="a4 hidden mx-auto border border-gray-300 bg-white text-start">
+                <input id="nama" class="w-full title text-center font-bold text-3xl border-0">
+                <input id="posisi" class="w-full text-center text-xl mb-4 border-0">
+                <div class="w-full flex" style="line-height: 1.2;">
+                    <input id="hp" class="auto-width ms-auto me-2 border-0 text-center">|
+                    <input id="email" class="auto-width mx-2 border-0 text-center">|
+                    <input id="linkedin" class="auto-width ms-2 me-auto border-0 text-center">
+                </div>
+                <input id="alamat" class="text-center mb-4 w-full border-0 text-center">
+                <textarea id="summary" class="text-justify mb-4 border-0 w-full overflow-hidden resize-none auto-height"
+                    style="line-height: 1.2;"
+                    oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';"></textarea>
+                <div class="title font-bold text-xl mb-1">EDUCATION</div>
+                <hr class="border-2 border-gray-950" />
+                <div id="pendidikan">
+                </div>
+                <div class="title font-bold text-xl mb-1 mt-4">WORK EXPERIENCE</div>
+                <hr class="border-2 border-gray-950" />
+                <div id="pengalaman" class="></div>
+                <div id=" pelatihan"></div>
+                <div id="sertifikat"></div>
+                <div id="juara"></div>
+                <div class="title font-bold text-xl mb-1 mt-4">SKILLS</div>
+                <hr class="border-2 border-gray-950" />
+                <div id="soft"></div>
+                <div id="hard"></div>
+                <div id="bahasa"></div>
+            </div>
+        </div>
+    </section>
+    <footer class="mx-auto text-center my-5">
+        <a href="https://www.instagram.com/rijukaze/" target="_blank"> © 2026 - Riju Kaze </a>
+    </footer>
+</body>
+
+<script>
+    function printArea() {
+        window.print();
+    }
+
+    function titleColor() {
+        $('.title').css({ 'color': $("#title").val() });
+    }
+
+    function lineColor() {
+        $('hr').css({ 'border-color': $("#line").val() });
+    }
+
+    document.getElementById('fileExcel').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            const json = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+
+            var dataDiri = [];
+            var pendidikan = [];
+            var pendidikan1 = [];
+            var pendidikan2 = [];
+            var pendidikan3 = [];
+            var pelatihan = [];
+            var pelatihan1 = [];
+            var pelatihan2 = [];
+            var pelatihan3 = [];
+            var sertifikat = [];
+            var sertifikat1 = [];
+            var sertifikat2 = [];
+            var sertifikat3 = [];
+            var sertifikat4 = [];
+            var sertifikat5 = [];
+            var skill = [];
+            var pengalaman = [];
+            var pengalaman1 = [];
+            var pengalaman2 = [];
+            var pengalaman3 = [];
+            var pengalaman4 = [];
+            var pengalaman5 = [];
+            var pengalaman6 = [];
+            var pengalaman7 = [];
+            var pengalaman8 = [];
+            var pengalaman9 = [];
+            var pengalaman10 = [];
+            var juara = [];
+            var juara1 = [];
+            var juara2 = [];
+            var juara3 = [];
+            var x = 1;
+
+            dataDiri["nama"] = json[x++].__EMPTY_3;
+            dataDiri["posisi"] = json[x++].__EMPTY_3;
+            dataDiri["alamat"] = json[x++].__EMPTY_3;
+            dataDiri["hp"] = json[x++].__EMPTY_3;
+            dataDiri["email"] = json[x++].__EMPTY_3;
+            dataDiri["linkedin"] = json[x++].__EMPTY_3;
+            dataDiri["summary"] = json[x++].__EMPTY_3;
+            x++;
+            pendidikan1["sekolah"] = json[x++].__EMPTY_3;
+            pendidikan1["jurusan"] = json[x++].__EMPTY_3;
+            pendidikan1["nilai"] = json[x++].__EMPTY_3;
+            pendidikan1["periode"] = json[x++].__EMPTY_3;
+            pendidikan[0] = pendidikan1;
+            pendidikan2["sekolah"] = json[x++].__EMPTY_3;
+            pendidikan2["jurusan"] = json[x++].__EMPTY_3;
+            pendidikan2["nilai"] = json[x++].__EMPTY_3;
+            pendidikan2["periode"] = json[x++].__EMPTY_3;
+            pendidikan[1] = pendidikan2;
+            pendidikan3["sekolah"] = json[x++].__EMPTY_3;
+            pendidikan3["jurusan"] = json[x++].__EMPTY_3;
+            pendidikan3["nilai"] = json[x++].__EMPTY_3;
+            pendidikan3["periode"] = json[x++].__EMPTY_3;
+            pendidikan[2] = pendidikan3;
+            x++;
+            pelatihan1["instansi"] = json[x++].__EMPTY_3;
+            pelatihan1["program"] = json[x++].__EMPTY_3;
+            pelatihan1["periode"] = json[x++].__EMPTY_3;
+            pelatihan[0] = pelatihan1;
+            pelatihan2["instansi"] = json[x++].__EMPTY_3;
+            pelatihan2["program"] = json[x++].__EMPTY_3;
+            pelatihan2["periode"] = json[x++].__EMPTY_3;
+            pelatihan[1] = pelatihan2;
+            pelatihan3["instansi"] = json[x++].__EMPTY_3;
+            pelatihan3["program"] = json[x++].__EMPTY_3;
+            pelatihan3["periode"] = json[x++].__EMPTY_3;
+            pelatihan[2] = pelatihan3;
+            x++;
+            sertifikat1["program"] = json[x++].__EMPTY_3;
+            sertifikat1["no"] = json[x++].__EMPTY_3;
+            sertifikat1["periode"] = json[x++].__EMPTY_3;
+            sertifikat[0] = sertifikat1;
+            sertifikat2["program"] = json[x++].__EMPTY_3;
+            sertifikat2["no"] = json[x++].__EMPTY_3;
+            sertifikat2["periode"] = json[x++].__EMPTY_3;
+            sertifikat[1] = sertifikat2;
+            sertifikat3["program"] = json[x++].__EMPTY_3;
+            sertifikat3["no"] = json[x++].__EMPTY_3;
+            sertifikat3["periode"] = json[x++].__EMPTY_3;
+            sertifikat[2] = sertifikat3;
+            sertifikat4["program"] = json[x++].__EMPTY_3;
+            sertifikat4["no"] = json[x++].__EMPTY_3;
+            sertifikat4["periode"] = json[x++].__EMPTY_3;
+            sertifikat[3] = sertifikat4;
+            sertifikat5["program"] = json[x++].__EMPTY_3;
+            sertifikat5["no"] = json[x++].__EMPTY_3;
+            sertifikat5["periode"] = json[x++].__EMPTY_3;
+            sertifikat[4] = sertifikat5;
+            x++;
+            juara1["instansi"] = json[x++].__EMPTY_3;
+            juara1["program"] = json[x++].__EMPTY_3;
+            juara1["periode"] = json[x++].__EMPTY_3;
+            juara[0] = juara1;
+            juara2["instansi"] = json[x++].__EMPTY_3;
+            juara2["program"] = json[x++].__EMPTY_3;
+            juara2["periode"] = json[x++].__EMPTY_3;
+            juara[1] = juara2;
+            juara3["instansi"] = json[x++].__EMPTY_3;
+            juara3["program"] = json[x++].__EMPTY_3;
+            juara3["periode"] = json[x++].__EMPTY_3;
+            juara[2] = juara3;
+            x++;
+            skill["soft"] = json[x++].__EMPTY_3;
+            skill["hard"] = json[x++].__EMPTY_3;
+            skill["bahasa"] = json[x++].__EMPTY_3;
+            x++;
+            pengalaman1["perusahaan"] = json[x++].__EMPTY_3;
+            pengalaman1["posisi"] = json[x++].__EMPTY_3;
+            pengalaman1["periode"] = json[x++].__EMPTY_3;
+            pengalaman1["tools"] = json[x++].__EMPTY_3;
+            pengalaman1["deskripsi"] = [
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3
+            ];
+            pengalaman[0] = pengalaman1;
+
+            pengalaman2["perusahaan"] = json[x++].__EMPTY_3;
+            pengalaman2["posisi"] = json[x++].__EMPTY_3;
+            pengalaman2["periode"] = json[x++].__EMPTY_3;
+            pengalaman2["tools"] = json[x++].__EMPTY_3;
+            pengalaman2["deskripsi"] = [
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3
+            ];
+            pengalaman[1] = pengalaman2;
+
+            pengalaman3["perusahaan"] = json[x++].__EMPTY_3;
+            pengalaman3["posisi"] = json[x++].__EMPTY_3;
+            pengalaman3["periode"] = json[x++].__EMPTY_3;
+            pengalaman3["tools"] = json[x++].__EMPTY_3;
+            pengalaman3["deskripsi"] = [
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3
+            ];
+            pengalaman[2] = pengalaman3;
+
+            pengalaman4["perusahaan"] = json[x++].__EMPTY_3;
+            pengalaman4["posisi"] = json[x++].__EMPTY_3;
+            pengalaman4["periode"] = json[x++].__EMPTY_3;
+            pengalaman4["tools"] = json[x++].__EMPTY_3;
+            pengalaman4["deskripsi"] = [
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3
+            ];
+            pengalaman[3] = pengalaman4;
+
+            pengalaman5["perusahaan"] = json[x++].__EMPTY_3;
+            pengalaman5["posisi"] = json[x++].__EMPTY_3;
+            pengalaman5["periode"] = json[x++].__EMPTY_3;
+            pengalaman5["tools"] = json[x++].__EMPTY_3;
+            pengalaman5["deskripsi"] = [
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3
+            ];
+            pengalaman[4] = pengalaman5;
+
+            pengalaman6["perusahaan"] = json[x++].__EMPTY_3;
+            pengalaman6["posisi"] = json[x++].__EMPTY_3;
+            pengalaman6["periode"] = json[x++].__EMPTY_3;
+            pengalaman6["tools"] = json[x++].__EMPTY_3;
+            pengalaman6["deskripsi"] = [
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3
+            ];
+            pengalaman[5] = pengalaman6;
+
+            pengalaman7["perusahaan"] = json[x++].__EMPTY_3;
+            pengalaman7["posisi"] = json[x++].__EMPTY_3;
+            pengalaman7["periode"] = json[x++].__EMPTY_3;
+            pengalaman7["tools"] = json[x++].__EMPTY_3;
+            pengalaman7["deskripsi"] = [
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3
+            ];
+            pengalaman[6] = pengalaman7;
+
+            pengalaman8["perusahaan"] = json[x++].__EMPTY_3;
+            pengalaman8["posisi"] = json[x++].__EMPTY_3;
+            pengalaman8["periode"] = json[x++].__EMPTY_3;
+            pengalaman8["tools"] = json[x++].__EMPTY_3;
+            pengalaman8["deskripsi"] = [
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3
+            ];
+            pengalaman[7] = pengalaman8;
+
+            pengalaman9["perusahaan"] = json[x++].__EMPTY_3;
+            pengalaman9["posisi"] = json[x++].__EMPTY_3;
+            pengalaman9["periode"] = json[x++].__EMPTY_3;
+            pengalaman9["tools"] = json[x++].__EMPTY_3;
+            pengalaman9["deskripsi"] = [
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3
+            ];
+            pengalaman[8] = pengalaman9;
+
+            pengalaman10["perusahaan"] = json[x++].__EMPTY_3;
+            pengalaman10["posisi"] = json[x++].__EMPTY_3;
+            pengalaman10["periode"] = json[x++].__EMPTY_3;
+            pengalaman10["tools"] = json[x++].__EMPTY_3;
+            pengalaman10["deskripsi"] = [
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3,
+                json[x++].__EMPTY_3
+            ];
+            pengalaman[9] = pengalaman10;
+
+            console.log(dataDiri);
+            console.log(pendidikan);
+            console.log(pelatihan);
+            console.log(sertifikat);
+            console.log(skill);
+            console.log(pengalaman);
+            console.log(juara);
+
+            convertCV(dataDiri, pendidikan, pelatihan, sertifikat, skill, pengalaman, juara);
+
+        }
+        reader.readAsArrayBuffer(file);
+    });
+
+    function copyAiPrompt() {
+        const text = `Ekstrak seluruh informasi dari dokumen CV ini dalam bahasa inggris dan sajikan dalam format JSON yang sangat terstruktur dengan ketentuan sebagai berikut:
+
+dataDiri: Buat objek dengan key nama, posisi, alamat, hp, email, linkedin, dan summary (ringkasan profesional).
+
+pendidikan: Buat objek dengan index string ("0", "1", "2", dst). Setiap index berisi key sekolah, jurusan, nilai (format angka seperti 37.8), dan periode.
+
+pelatihan: Buat objek dengan index string ("0", "1", "2", dst). 
+Setiap index berisi key instansi, program, dan periode.
+
+sertifikat: Buat objek dengan index string ("0", "1", "2", dst). 
+Setiap index berisi key program, no, dan periode.
+
+skill: Buat objek dengan key "bahasa", 
+"hard" (daftar hard skill dipisah koma), 
+dan "soft" (daftar soft skill dipisah koma).
+
+pengalaman: Buat objek dengan index string ("0", "1", "2", dst). Setiap index berisi:
+perusahaan, posisi, periode, tools.
+
+juara: Buat objek dengan index string ("0", "1", "2", dst). Setiap index berisi key instansi, program, dan periode.`;
+        navigator.clipboard.writeText(text)
+            .then(() => {
+                alert("Prompt berhasil di-copy!");
+            })
+            .catch(err => {
+                console.error("Gagal copy:", err);
+            });
+    }
+    function submitPrompt() {
+        try {
+
+            var text = $("#json").val();
+            const parseJson = JSON.parse(text);
+            dataDiri = parseJson.dataDiri;
+            pendidikan = parseJson.pendidikan;
+            pelatihan = parseJson.pelatihan;
+            sertifikat = parseJson.sertifikat;
+            skill = parseJson.skill;
+            pengalaman = parseJson.pengalaman;
+            juara = parseJson.juara;
+
+            console.log(dataDiri);
+            console.log(pendidikan);
+            console.log(pelatihan);
+            console.log(sertifikat);
+            console.log(skill);
+            console.log(pengalaman);
+            console.log(juara);
+
+            convertCV(dataDiri, pendidikan, pelatihan, sertifikat, skill, pengalaman, juara);
+
+        } catch (error) {
+            alert("format input anda belum sesuai format JSON");
+            console.error(error.message);
+        }
+    }
+
+    function convertCV(dataDiri, pendidikan, pelatihan, sertifikat, skill, pengalaman, juara) {
+
+        $("#nama").val(dataDiri.nama.toUpperCase());
+        $("#posisi").val(dataDiri.posisi);
+        $("#hp").val(dataDiri.hp);
+        $("#email").val(dataDiri.email);
+        $("#linkedin").val(dataDiri.linkedin);
+        $("#alamat").val(dataDiri.alamat);
+        $("#summary").val(dataDiri.summary);
+
+        var pendidikanHtml = "";
+        for (var i in pendidikan) {
+            if (pendidikan[i].sekolah) {
+                pendidikanHtml += ''
+                    + '  <div class="w-full flex">'
+                    + '    <div class="font-bold"><input type="text" class="no-border auto-width" value="' + pendidikan[i].sekolah + '"></div>'
+                    + '    <div class="ms-auto font-bold"><input type="text" class="no-border auto-width" value="' + pendidikan[i].periode + '"></div>'
+                    + '  </div>'
+                    + '  <div class="w-full flex">'
+                    + '    <div class="me-2"><input type="text" class="no-border auto-width" value="' + pendidikan[i].jurusan + '"></div>|'
+                    + '    <div class="ms-2">GPA: <input type="text" class="no-border auto-width" value="' + pendidikan[i].nilai + '"></div>'
+                    + '  </div>';
+            }
+        }
+        $("#pendidikan").html(pendidikanHtml);
+
+        var pengalamanHtml = "";
+        var currCompany = "";
+        for (var i in pengalaman) {
+            if (pengalaman[i].perusahaan) {
+
+                if (currCompany != pengalaman[i].perusahaan) {
+                    pengalamanHtml += ''
+                        + '  <div class="w-full flex font-bold">'
+                        + '    <div><input type="text" class="no-border auto-width" value="' + pengalaman[i].perusahaan + '"></div>'
+                        + '    <div class="ms-auto"><input type="text" class="no-border auto-width" value="' + pengalaman[i].periode + '"></div>'
+                        + '  </div>'
+                        + '  <div class="me-2"><input type="text" class="no-border auto-width" value="' + pengalaman[i].posisi + '"></div>';
+                } else {
+                    pengalamanHtml += ''
+                        + '  <div class="w-full flex">'
+                        + '    <div><input type="text" class="no-border auto-width" value="' + pengalaman[i].posisi + '"></div>'
+                        + '    <div class="ms-auto font-bold"><input type="text" class="no-border auto-width" value="' + pengalaman[i].periode + '"></div>'
+                        + '  </div>';
+                }
+                currCompany = pengalaman[i].perusahaan;
+
+                pengalamanHtml += ''
+                    + '  <div><ul class="list-disc pl-5">';
+                for (var j in pengalaman[i].deskripsi) {
+                    if (pengalaman[i].deskripsi[j]) {
+                        pengalamanHtml += `  <li><textarea rows="1" class="w-full resize-none overflow-hidden border-0 p-0 leading-5 align-top auto-height" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';">` + pengalaman[i].deskripsi[j] + `</textarea></li>`;
+                    }
+                }
+                pengalamanHtml += ''
+                    + '  </ul></div><div class="mb-2"><b>Tools:</b> <input type="text" class="no-border auto-width" value="' + pengalaman[i].tools + '"></div>';
+            }
+        }
+        $("#pengalaman").html(pengalamanHtml);
+
+        var pelatihanHtml = "";
+        for (var i in pelatihan) {
+            if (pelatihan[i].instansi) {
+                pelatihanHtml = ''
+                    + ' <div class="title font-bold text-xl mb-1 mt-4">COURSE & TRAINING</div>'
+                    + ' <hr class="border-2 border-gray-950" />';
+            }
+        }
+        for (var i in pelatihan) {
+            if (pelatihan[i].instansi) {
+                pelatihanHtml += ''
+                    + '  <div class="w-full flex">'
+                    + '    <div class="font-bold"><input type="text" class="no-border auto-width" value="' + pelatihan[i].instansi + '"></div>'
+                    + '    <div class="ms-auto font-bold"><input type="text" class="no-border auto-width" value="' + pelatihan[i].periode + '"></div>'
+                    + '  </div>'
+                    + '  <div class="me-2"><input type="text" class="no-border auto-width" value="' + pelatihan[i].program + '"></div>';
+            }
+        }
+        $("#pelatihan").html(pelatihanHtml);
+
+        var sertifikatHtml = "";
+        for (var i in sertifikat) {
+            if (sertifikat[i].program) {
+                sertifikatHtml = ''
+                    + ' <div class="title font-bold text-xl mb-1 mt-4">CERTIFICATION</div>'
+                    + ' <hr class="border-2 border-gray-950" />';
+            }
+        }
+        for (var i in sertifikat) {
+            if (sertifikat[i].program) {
+                sertifikatHtml += ''
+                    + '  <div class="w-full flex">'
+                    + '    <div class="font-bold me-2"><input type="text" class="no-border auto-width" value="' + sertifikat[i].program + '"></div>|'
+                    + '    <div class="ms-2"><input type="text" class="no-border auto-width" value="No. ' + sertifikat[i].no + '"></div>'
+                    + '    <div class="ms-auto font-bold"><input type="text" class="no-border auto-width" value="' + sertifikat[i].periode + '"></div>'
+                    + '  </div>';
+            }
+        }
+        $("#sertifikat").html(sertifikatHtml);
+
+        var juaraHtml = "";
+        for (var i in juara) {
+            if (juara[i].instansi) {
+                juaraHtml = ''
+                    + ' <div class="title font-bold text-xl mb-1 mt-4">AWARDS</div>'
+                    + ' <hr class="border-2 border-gray-950" />';
+            }
+        }
+        for (var i in juara) {
+            if (juara[i].instansi) {
+                juaraHtml += ''
+                    + '  <div class="w-full flex">'
+                    + '    <div class="font-bold"><input type="text" class="no-border auto-width" value="' + juara[i].program + '"></div>'
+                    + '    <div class="ms-auto font-bold"><input type="text" class="no-border auto-width" value="' + juara[i].periode + '"></div>'
+                    + '  </div>'
+                    + '  <div class="me-2"><input type="text" class="no-border auto-width" value="' + juara[i].instansi + '"></div>';
+            }
+        }
+        $("#juara").html(juaraHtml);
+
+        $("#soft").html('Soft Skill: <input type="text" class="no-border auto-width" value="' + skill.soft + '">');
+        $("#hard").html('Hard Skill: <input type="text" class="no-border auto-width" value="' + skill.hard + '">');
+        if (skill.bahasa) {
+            $("#bahasa").html('Language: <input type="text" class="no-border auto-width" value="' + skill.bahasa + '">');
+        }
+
+        $("#printArea").removeClass("hidden");
+        $("#btn-print").removeClass("hidden");
+        $("#title").removeClass("hidden");
+        $("#line").removeClass("hidden");
+
+        widthInput();
+    }
+
+    widthInput();
+
+    function widthInput() {
+        document.querySelectorAll('.auto-width').forEach(input => {
+            const measure = document.createElement('span');
+
+            measure.style.position = 'absolute';
+            measure.style.visibility = 'hidden';
+            measure.style.whiteSpace = 'pre';
+
+            document.body.appendChild(measure);
+
+            const updateWidth = () => {
+                const styles = getComputedStyle(input);
+
+                measure.style.font = styles.font;
+                measure.style.letterSpacing = styles.letterSpacing;
+                measure.textContent = input.value || input.placeholder || ' ';
+
+                input.style.width = `${measure.offsetWidth + 8}px`;
+            };
+
+            input.addEventListener('input', updateWidth);
+            updateWidth();
+        });
+
+        document.querySelectorAll('.auto-height').forEach(textarea => {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+            textarea.addEventListener('input', () => {
+                autoResize(textarea);
+            });
+        });
+    }
+</script>
+
+</html>

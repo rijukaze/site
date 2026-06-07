@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://rijukaze.github.io/site/images/icon.png" type="image/x-icon">
+
+    <title>RIJU 風</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jacques+Francois&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Antique&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+</head>
+
+<body class="bg-orange-50 min-h-screen pt-9">
+    <header class="bg-white py-3 shadow-md fixed top-0 w-full">
+        <div class="container mx-auto px-2 flex text-center">
+            <a href="https://rijukaze.github.io/site/" class="flex">
+                <image src="https://rijukaze.github.io/site/images/icon.png" class="h-10" />
+                <span class="text-3xl mb-0 txt-JF">Riju<span class="txt-ZA">風</span></span>
+            </a>
+            <a href="https://rijukaze.github.io/site/" class="ms-auto text-3xl">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+        </div>
+    </header>
+    <div class="container mx-auto mt-12 px-5 grid lg:grid-cols-4 gap-4" id="list-menu">
+        <span class="text-5xl my-12 py-12 mx-auto col-span-4">Loading...<span>
+    </div>
+    <footer class="mx-auto text-center my-5">
+        <a href="https://www.instagram.com/rijukaze/" target="_blank"> © 2026 - Riju Kaze </a>
+    </footer>
+</body>
+
+<script>
+    const apiKey = "AIzaSyClTTJGBnoBQzHiIQh9_sZ2aEH0tIxrslo";
+    const spreadsheetId = "1kkmYf47w6n0-QKWRQvE9sBh0K7xXJPaBK9DffyDxLHg";
+
+    const url =
+        `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/CV!B3:D?key=${apiKey}`;
+
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            let card = '';
+            data.values.forEach(row => {
+                console.log(row);
+                card += '<a href="' + row[2] + '" class=""><div class="bg-white p-5 text-center border border-lime-300 rounded-lg shadow-lg">' + row[1] + '<div class="mt-5 py-3 px-10 bg-lime-100 border border-lime-300 rounded-lg font-bold text-wite shadow">' + row[0] + '</div></div></a>';
+            });
+            $("#list-menu").html(card);
+        });
+
+</script>
+
+</html>
