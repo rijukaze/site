@@ -524,22 +524,29 @@
     function copyAiPrompt() {
         const text = `Ekstrak seluruh informasi dari dokumen CV ini dalam bahasa inggris dan sajikan dalam format JSON yang sangat terstruktur dengan ketentuan sebagai berikut:
 
+
 dataDiri: Buat objek dengan key nama, posisi, alamat, hp, email, linkedin, dan summary (ringkasan profesional).
+
 
 pendidikan: Buat objek dengan index string ("0", "1", "2", dst). Setiap index berisi key sekolah, jurusan, nilai (format angka seperti 37.8), dan periode.
 
-pelatihan: Buat objek dengan index string ("0", "1", "2", dst). 
+
+pelatihan: Buat objek dengan index string ("0", "1", "2", dst).
 Setiap index berisi key instansi, program, dan periode.
 
-sertifikat: Buat objek dengan index string ("0", "1", "2", dst). 
+
+sertifikat: Buat objek dengan index string ("0", "1", "2", dst).
 Setiap index berisi key program, no, dan periode.
 
-skill: Buat objek dengan key "bahasa", 
-"hard" (daftar hard skill dipisah koma), 
+
+skill: Buat objek dengan key "bahasa",
+"hard" (daftar hard skill dipisah koma),
 dan "soft" (daftar soft skill dipisah koma).
 
+
 pengalaman: Buat objek dengan index string ("0", "1", "2", dst). Setiap index berisi:
-perusahaan, posisi, periode, tools.
+perusahaan, posisi, periode, tools, deskripsi (berupa index string ("0", "1", "2", dst) tanpa angka referensi).
+
 
 juara: Buat objek dengan index string ("0", "1", "2", dst). Setiap index berisi key instansi, program, dan periode.`;
         navigator.clipboard.writeText(text)
